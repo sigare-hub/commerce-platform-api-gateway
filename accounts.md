@@ -1,0 +1,10 @@
+This configuration is a YAML configuration file for a Spring Cloud Gateway project, which is used to define routes to various services. The file contains the following configurations:
+
+spring section: contains the profile, application, datasource, and JPA configurations for the Spring application.
+cloud.gateway.routes section: contains route definitions for the Spring Cloud Gateway. Each route definition contains an id, uri, predicates, filters, and metadata.
+The routes defined in the configuration file are:
+
+/auth/login: This route is used for the login endpoint. It has the id of login, and the uri of http://localhost:4000/api. The predicates for this route are Path=/auth/login and Method=POST. The filters for this route include RewritePath, RewriteResponseHeader, OAuth2, and metadata which provides version and description information.
+/recovery-password: This route is used for the recovery password endpoint. It has the id of recovery-password, and the uri of http://localhost:4000/api. The predicates for this route include Path=/recovery-password/**, Method=GET, Method=POST, and Method=PATCH. The filters for this route include RewritePath, OAuth2, RateLimiter, and metadata which provides version and description information.
+/user: This route is used for the create user endpoint. It has the id of create-user, and the uri of lb://accounts-service. The predicates for this route include Path=/user and Method=POST. The filters for this route include RewritePath, JwtAuthenticationFilter, OAuth2, and metadata which provides version and description information.
+/role: This route is used for the create role and get role endpoints. It has the id of create-role and get-roles, and the uri of lb://accounts-service and http://localhost:4000/api, respectively. The predicates for the /role endpoint include Path=/role and Method=POST. The predicates for the /role endpoint include Path=/role and Method=GET. The filters for this route include RewritePath, JwtAuthenticationFilter, OAuth2, and metadata which provides version and description information.

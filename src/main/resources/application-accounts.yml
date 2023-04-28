@@ -1,0 +1,212 @@
+#spring:
+#  application:
+#    name: accounts-service
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/accounts
+#    username: root
+#    password: mypassword
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          accounts-client:
+#            client-id: accounts-client
+#            client-secret: accounts-secret
+#            scope: accounts.write
+#            authorization-grant-type: authorization_code
+#            redirect-uri: http://localhost:8080/login/oauth2/code/accounts-client
+#            client-name: Accounts Client
+#        provider:
+#          accounts-provider:
+#            token-uri: http://auth-server:8080/oauth/token
+#            authorization-uri: http://auth-server:8080/oauth/authorize
+#            user-info-uri: http://auth-server:8080/userinfo
+#            user-name-attribute: sub
+#server:
+#  port: 8081
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
+#
+
+
+#spring:
+#  profile:
+#    active: dev
+#  application:
+#    name: commerce-platform-api-accounts
+#  datasource:
+#    url: jdbc:mysql://localhost:3308/commerce-platform-accounts
+#    username: develop
+#    password: 12345
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+spring:
+  cloud:
+    gateway:
+      routes:
+#        # LOGIN
+#        - id: login
+#          uri: http://localhost:4000/api
+#          # O predicado Path=/accounts/** indica que essa rota deve ser acionada quando a URL começa com /accounts.
+#          predicates:
+#            - Path=/auth/login
+#            - Method=POST
+#          filters:
+#            #- RewritePath: essa configuração permite alterar o caminho do request para a rota de destino.
+#            # No caso, a expressão regular /(?<path>.*) é usada para capturar todo o caminho depois de /auth/login.
+#            # Em seguida, o valor ${path} é injetado na string /$\{path} para criar um novo caminho.
+#            - RewritePath=/auth/login/(?<path>.*), /$\{path}
+#            -
+#            # RewriteResponseHeader: essa configuração permite alterar o valor de um header de resposta.
+#            # No caso, o valor do header X-Forwarded-Prefix é substituído por /auth/login.
+#            # Isso é útil quando você tem um proxy reverso entre o cliente e o servidor,
+#            # porque o proxy adiciona um prefixo à URL e essa configuração garante que
+#            # o prefixo correto seja adicionado à resposta.
+#            - RewriteResponseHeader=X-Forwarded-Prefix, /auth/login
+#            - name: OAuth2
+#              args:
+#                client-id: accounts-client
+#                client-secret: accounts-secret
+#                token-uri: https://auth-server/oauth/token
+#                user-info-uri: https://auth-server/userinfo
+#                check-token-uri: https://auth-server/oauth/check_token
+#                scopes: accounts.read,accounts.write
+#                route-id: login
+#          metadata:
+#            version: v1
+#            description: Login endpoint
+#
+#        # RECOVERY PASSWORD FLOW
+#        - id: recovery-password
+#          uri: http://localhost:4000/api
+#          predicates:
+#            - Path=/recovery-password/**
+#            - Method=GET
+#            - Method=POST
+#            - Method=PATCH
+#          filters:
+#            - RewritePath=/recovery-password/(?<path>.*), /$\{path}
+#            - name: OAuth2
+#              args:
+#                client-id: accounts-client
+#                client-secret: accounts-secret
+#                token-uri: https://auth-server/oauth/token
+#                user-info-uri: https://auth-server/userinfo
+#                check-token-uri: https://auth-server/oauth/check_token
+#                scopes: accounts.read,accounts.write
+#                route-id: recovery-password
+#            - name: RateLimiter
+#              args:
+#                redisUri: redis://localhost:6379
+#                keyResolver: "#{@userKeyResolver}"
+#                replenishRate: 5
+#                burstCapacity: 10
+#          metadata:
+#            version: v1
+#            description: Recovery password endpoint
+#
+#        # CREATE USER
+#        - id: create-user
+#          uri: http://localhost:4000/api
+#          predicates:
+#            - Path=/user
+#            - Method=POST
+#          filters:
+#            - RewritePath=/user/(?<path>.*), /$\{path}
+#
+#            # O filtro JwtAuthenticationFilter é responsável por extrair o token JWT do cabeçalho de autorização da
+#            # requisição e autenticar o usuário com base nas informações contidas no token, incluindo o papel (role)
+#            # tribuído a ele. Como a rota "/user" é restrita para usuários com papel "ADMIN", é necessário garantir
+#            # que apenas usuários autenticados com esse papel tenham acesso a essa rota.
+#            - name: JwtAuthenticationFilter
+#              args:
+#                tokenHeader: Authorization
+#                publicKeyUri: https://auth-server/.well-known/jwks.json
+#            - name: OAuth2
+#              args:
+#                client-id: accounts-client
+#                client-secret: accounts-secret
+#                token-uri: https://auth-server/oauth/token
+#                user-info-uri: https://auth-server/userinfo
+#                check-token-uri: https://auth-server/oauth/check_token
+#                scopes: accounts.write
+#                route-id: create-user
+#          metadata:
+#            version: v1
+#            description: Create user endpoint
+#
+#        # CREATE ROLE
+#        - id: create-role
+#          uri: http://localhost:4000/api
+#          predicates:
+#            - Path=/role
+#            - Method=POST
+#          filters:
+#            - RewritePath=/role/(?<path>.*), /$\{path}
+#            - name: JwtAuthenticationFilter
+#              args:
+#                tokenHeader: Authorization
+#                publicKeyUri: https://auth-server/.well-known/jwks.json
+#            - name: OAuth2
+#              args:
+#                client-id: accounts-client
+#                client-secret: accounts-secret
+#                token-uri: https://auth-server/oauth/token
+#                user-info-uri: https://auth-server/userinfo
+#                check-token-uri: https://auth-server/oauth/check_token
+#                scopes: accounts.write
+#                route-id: create-role
+#          metadata:
+#            version: v1
+#            description: Create role endpoint
+#
+#        # GET ROLE
+#        - id: get-roles
+#          uri: http://localhost:4000/api
+#          predicates:
+#            - Path=/role
+#            - Method=GET
+#          filters:
+#            - RewritePath=/role/(?<path>.*), /$\{path}
+#            - name: JwtAuthenticationFilter
+#              args:
+#                  tokenHeader: Authorization
+#                  publicKeyUri: https://auth-server/.well-known/jwks.json
+#            - name: OAuth2
+#              args:
+#                client-id: accounts-client
+#                client-secret: accounts-secret
+#                token-uri: https://auth-server/oauth/token
+#                user-info-uri: https://auth-server/userinfo
+#                check-token-uri: https://auth-server/oauth/check_token
+#                scopes: accounts.read
+#                route-id: get-roles
+
+        # PATCH USERS ROLES
+        - id: patch-users-roles
+          uri: http://localhost:4000/api
+          predicates:
+            - Path=/users-roles
+            - Method=PATCH
+          filters:
+            - RewritePath=/users-roles/(?<path>.*), /$\{path}
+            - name: JwtAuthenticationFilter
+              args:
+                tokenHeader: Authorization
+                publicKeyUri: https://auth-server/.well-known/jwks.json
+#            - name: OAuth2
+#              args:
+#                client-id: accounts-client
+#                client-secret: accounts-secret
+#                token-uri: https://auth-server/oauth/token
+#                user-info-uri: https://auth-server/userinfo
+#                check-token-uri: https://auth-server/oauth/check_token
+#                scopes: accounts.read
+#                route-id: patch-users-roles
