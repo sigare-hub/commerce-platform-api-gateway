@@ -1,0 +1,3 @@
+Um cliente faz uma solicitação para algum recurso protegido sem autorização. O API Gateway o rejeita e redireciona o usuário ao Authorization Server para se autorizar no sistema, obter todas as concessões necessárias e, em seguida, fazer a solicitação novamente com essas concessões para receber informações desse recurso protegido.
+
+![Alt text](https://i0.wp.com/i.postimg.cc/xdjbvBkc/security.pnghttps://i.postimg.cc/xdjbvBkc/security.png?resize=674%2C438&ssl=1)

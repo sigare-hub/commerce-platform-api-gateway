@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: commerce-platform-api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: commerce-platform-api-accounts
+          uri: http://localhost:4000/api
+          predicates:
+            - Path=/users-roles/**
