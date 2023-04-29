@@ -41,7 +41,7 @@ public class AuthenticationFilter implements GatewayFilter {
             var subject = jwtService.getSubject(token);
 
             if (StringUtils.hasText(token)) {
-                OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId("your-client-id")
+                OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId("gateway-client-id")
                         .principal(subject)
                         .attributes(attrs -> attrs.put(ServerWebExchange.class.getName(), exchange))
                         .build();
