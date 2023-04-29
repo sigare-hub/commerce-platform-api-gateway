@@ -1,22 +1,20 @@
 package com.commerceplatform.api.gateway.security.filters;
 
+import com.commerceplatform.api.gateway.security.RouteValidator;
 import com.commerceplatform.api.gateway.security.services.JwtService;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServerHttpRequest;
-import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
-import org.springframework.stereotype.Component;
+import org.springframework.security.oauth2.client.*;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-@Component
 public class AuthenticationFilter implements GatewayFilter {
     private final JwtService jwtService;
     private final RouteValidator routeValidator;
@@ -26,6 +24,11 @@ public class AuthenticationFilter implements GatewayFilter {
         this.jwtService = jwtService;
         this.routeValidator = routeValidator;
         this.authorizedClientManager = authorizedClientManager;
+    }
+
+    @Bean
+    public AuthenticationFilter authenticationFilter() {
+        return new AuthenticationFilter(jwtService, routeValidator, authorizedClientManager);
     }
 
     @Override
