@@ -6,11 +6,13 @@ import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 
 @Configuration
 public class AccountsApiRoutesConfig {
     private static final String API_ACCOUNTS_URI = "http://localhost:4000/api";
+
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     public AccountsApiRoutesConfig(CsrfHeaderFilter csrfHeaderFilter) {}
@@ -41,6 +43,9 @@ public class AccountsApiRoutesConfig {
             .route("update-user-roles", r -> r.method(HttpMethod.PATCH).and().path("/users-roles")
                 .filters(f -> f.filter(csrfHeaderFilter).filter(jwtAuthenticationFilter))
                 .uri(API_ACCOUNTS_URI))
+            .route("test", r -> r.method(HttpMethod.GET).and().path("/test")
+                .filters( f -> f.filter(csrfHeaderFilter).filter(jwtAuthenticationFilter))
+                .uri(API_ACCOUNTS_URI + "/test"))
             .build();
     }
 

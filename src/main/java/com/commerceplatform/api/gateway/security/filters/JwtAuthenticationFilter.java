@@ -6,9 +6,9 @@ import com.commerceplatform.api.gateway.security.services.JwtService;
 
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-//import org.springframework.http.HttpHeaders;
-//import org.springframework.http.server.ServerHttpRequest;
+
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServerHttpRequest;
@@ -18,8 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
@@ -39,29 +38,30 @@ public class JwtAuthenticationFilter implements GatewayFilter {
         this.routeValidator = routeValidator;
     }
 
-    private void authenticateByToken(String token) {
-        var subject = jwtService.getSubject(token);
-        Map<String, Claim> claims = jwtService.getClaimsFromToken(token);
-        List<String> roles = (List<String>) claims.get("roles");
-
-        if(roles != null && !roles.isEmpty()) {
-            List<GrantedAuthority> authorities = roles.stream()
-                    .map(role -> new SimpleGrantedAuthority(role))
-                    .collect(Collectors.toList());
-
-            Authentication authentication = new UsernamePasswordAuthenticationToken(subject, null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-    }
-
-    private String getHeaderToken(String token) {
-        if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
-            return token.substring(7);
-        }
-        return null;
-    }
+//    private void authenticateByToken(String token) {
+//        var subject = jwtService.getSubject(token);
+//        Map<String, Claim> claims = jwtService.getClaimsFromToken(token);
+//        List<String> roles = (List<String>) claims.get("roles");
+//
+//        if(roles != null && !roles.isEmpty()) {
+//            List<GrantedAuthority> authorities = roles.stream()
+//                    .map(role -> new SimpleGrantedAuthority(role))
+//                    .collect(Collectors.toList());
+//
+//            Authentication authentication = new UsernamePasswordAuthenticationToken(subject, null, authorities);
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//        }
+//    }
+//
+//    private String getHeaderToken(String token) {
+//        if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
+//            return token.substring(7);
+//        }
+//        return null;
+//    }
 
     @Bean
+    @Order(1)
     public JwtAuthenticationFilter authenticationFilter() {
         return new JwtAuthenticationFilter(jwtService, routeValidator);
     }
@@ -72,21 +72,27 @@ public class JwtAuthenticationFilter implements GatewayFilter {
         ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
 
         if (routeValidator.isSecured(request)) {
+            System.out.println("Passei numa rota autenticada: " + request.getURI());
+
             String token = extractToken(request);
 
             if (!request.getHeaders().containsKey("Authorization")) {
+                System.out.println("Nao possui authorization");
                 ServerHttpResponse response = (ServerHttpResponse) exchange.getResponse();
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
             }
 
             if(token == null) {
+                System.out.println("Token invalido ou null");
                 ServerHttpResponse response = (ServerHttpResponse) exchange.getResponse();
                 response.setStatusCode(HttpStatus.BAD_REQUEST);
             }
 
             Map<String, Claim> claims = jwtService.getClaimsFromToken(token);
+            System.out.println("claims "+claims);
             exchange.getRequest().mutate().header("id", String.valueOf(claims.get("id"))).build();
         }
+        System.out.println("Não faço parte das rotas seguras");
         return chain.filter(exchange);
     }
 
