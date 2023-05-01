@@ -13,17 +13,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -61,7 +57,6 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 //    }
 
     @Bean
-    @Order(1)
     public JwtAuthenticationFilter authenticationFilter() {
         return new JwtAuthenticationFilter(jwtService, routeValidator);
     }
@@ -70,6 +65,9 @@ public class JwtAuthenticationFilter implements GatewayFilter {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
         ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
+
+
+
 
         if (routeValidator.isSecured(request)) {
             System.out.println("Passei numa rota autenticada: " + request.getURI());
@@ -89,8 +87,9 @@ public class JwtAuthenticationFilter implements GatewayFilter {
             }
 
             Map<String, Claim> claims = jwtService.getClaimsFromToken(token);
-            System.out.println("claims "+claims);
-            exchange.getRequest().mutate().header("id", String.valueOf(claims.get("id"))).build();
+            List<String> roles = claims.get("roles").asList(String.class);
+
+            exchange.getRequest().mutate().header("roles", String.valueOf(roles)).build();
         }
         System.out.println("Não faço parte das rotas seguras");
         return chain.filter(exchange);
