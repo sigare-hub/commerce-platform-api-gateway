@@ -1,18 +1,2 @@
-spring:
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            clientId: commerce-platform-api-gateway
-            clientSecret: mysecret
-            scope:
-              - openid
-              - email
-              - profile
-        provider:
-          google:
-            authorizationUri: https://localhost:4000/api/oauth2/auth
-            tokenUri: https://localhost:4000/api/oauth2/token
-            userInfoUri: https://localhost:4000/api/oauth2/v3/userinfo
-            userNameAttribute: gateway
+server:
+  port: 8080

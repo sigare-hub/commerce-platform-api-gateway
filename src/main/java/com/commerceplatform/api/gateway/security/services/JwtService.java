@@ -13,7 +13,7 @@ public class JwtService {
     //    @Value("${security.jwt.secret}")
     //    private static final long EXPIRATION_TIME = 86400000L;
 
-    private static final String SECRET_KEY = "mySecretKey";
+    private static final String SECRET_KEY = "$2a$12$yK6MT6MH.ALvfRt/t1/Qd.0f6GpWUQvNlfrh06ruzOIMIPm1D4qoe";
 
     public String getSubject(String token) {
         return JWT.require(Algorithm.HMAC256(SECRET_KEY))
