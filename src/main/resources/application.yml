@@ -1,2 +1,5 @@
 server:
   port: 8080
+security:
+  jwt:
+    secret: "$2a$12$yK6MT6MH.ALvfRt/t1/Qd.0f6GpWUQvNlfrh06ruzOIMIPm1D4qoe"

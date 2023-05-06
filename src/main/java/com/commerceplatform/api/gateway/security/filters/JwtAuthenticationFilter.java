@@ -36,20 +36,18 @@ public class JwtAuthenticationFilter implements GatewayFilter {
        var request = exchange.getRequest();
 
         if (routeValidator.isSecured(request)) {
-            System.out.println("Passei numa rota autenticada: " + request.getURI());
-
             String token = extractToken(request);
 
             if (!request.getHeaders().containsKey("Authorization")) {
-                System.out.println("Nao possui authorization");
                 ServerHttpResponse response =  exchange.getResponse();
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                response.setComplete();
             }
 
             if(token == null) {
-                System.out.println("Token invalido ou null");
                 ServerHttpResponse response = exchange.getResponse();
                 response.setStatusCode(HttpStatus.BAD_REQUEST);
+                return response.setComplete();
             }
 
             Map<String, Claim> claims = jwtService.getClaimsFromToken(token);
@@ -57,7 +55,6 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 
             exchange.getRequest().mutate().header("roles", String.valueOf(roles)).build();
         }
-        System.out.println("Não faço parte das rotas seguras");
         return chain.filter(exchange);
     }
 
