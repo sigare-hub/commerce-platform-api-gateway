@@ -21,7 +21,7 @@ public class AccountsApiRoutesConfig {
     @Bean
     public RouteLocator routeLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-            .route("test", r -> r.method(HttpMethod.GET).and().path("/api/test").uri(API_ACCOUNTS_URI))
+            .route("test", r -> r.method(HttpMethod.GET).and().path("/api/test").filters(f -> f.filter(jwtAuthenticationFilter)).uri(API_ACCOUNTS_URI))
             .route("auth-login", r -> r.path("/api/auth/login").uri(API_ACCOUNTS_URI))
             .route("auth-validate-token", r -> r.path("/api/auth/validate-token").uri(API_ACCOUNTS_URI))
             .route("auth-recovery-password/**", r -> r.path("/api/recovery-password/**").uri(API_ACCOUNTS_URI))
