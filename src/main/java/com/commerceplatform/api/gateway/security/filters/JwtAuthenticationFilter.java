@@ -40,35 +40,25 @@ public class JwtAuthenticationFilter implements GatewayFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
-       var request = exchange.getRequest();
+        ServerHttpRequest request = exchange.getRequest();
+        ServerHttpResponse response = exchange.getResponse();
 
-        if (Boolean.FALSE.equals(routeValidator.isSecured(request))) {
-
+        if (routeValidator.isSecured(request)) {
             String token = extractToken(request);
+//
+//            if (!request.getHeaders().containsKey("Authorization")) {
+//                response.setStatusCode(HttpStatus.UNAUTHORIZED);
+//            }
+
             if(token == null) {
-                ServerHttpResponse response = exchange.getResponse();
                 response.setStatusCode(HttpStatus.BAD_REQUEST);
-                response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
                 String message = "Voce deseja solicitar uma rota protegida, mas não forneceu um token.";
                 return response.writeAndFlushWith(Mono.just(
                         Mono.just(response.bufferFactory().wrap(message.getBytes()))
                 ));
             }
 
-            System.out.println(token);
 
-//            if(token == null) {
-//                System.out.println("nao tem token");
-//                ServerHttpResponse response = exchange.getResponse();
-//                response.setStatusCode(HttpStatus.BAD_REQUEST);
-//                response.setComplete();
-//            }
-//
-//            if (!request.getHeaders().containsKey("Authorization")) {
-//                ServerHttpResponse response =  exchange.getResponse();
-//                response.setStatusCode(HttpStatus.UNAUTHORIZED);
-//                response.setComplete();
-//            }
 //
 //            try {
 //                URI uri = URI.create("http://localhost:4000/api/auth/validate-token?token="+token);
@@ -87,10 +77,10 @@ public class JwtAuthenticationFilter implements GatewayFilter {
 //                throw new RuntimeException(e.getMessage());
 //            }
 //
-//            Map<String, Claim> claims = jwtService.getClaimsFromToken(token);
-//            List<String> roles = claims.get("roles").asList(String.class);
-//
-//            exchange.getRequest().mutate().header("roles", String.valueOf(roles)).build();
+            Map<String, Claim> claims = jwtService.getClaimsFromToken(token);
+            List<String> roles = claims.get("roles").asList(String.class);
+
+            exchange.getRequest().mutate().header("roles", String.valueOf(roles)).build();
         }
         return chain.filter(exchange);
     }
