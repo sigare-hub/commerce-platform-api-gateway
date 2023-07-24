@@ -11,7 +11,7 @@ import org.springframework.http.HttpMethod;
 @Configuration
 public class AccountsApiRoutesConfig {
     private static final String API_ACCOUNTS_URI = "http://localhost:4000";
-    private static final String API_STOCK_URI = "http://localhost:4001";
+    private static final String API_PRODUCTS_URI = "lb://commerce-platform-api-products";
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -31,8 +31,8 @@ public class AccountsApiRoutesConfig {
             .route("user-create", r -> r.path("/api/user").filters(f -> f.filter(jwtAuthenticationFilter)).uri(API_ACCOUNTS_URI))
             .route("user-find-all", r -> r.path("/api/user").filters(f -> f.filter(jwtAuthenticationFilter)).uri(API_ACCOUNTS_URI))
             .route("users-roles-patch", r -> r.path("/api/users-roles").filters(f -> f.filter(jwtAuthenticationFilter)).uri(API_ACCOUNTS_URI))
-            .route("product-create", r -> r.path("/api/product").filters(f -> f.filter(jwtAuthenticationFilter)).uri(API_STOCK_URI))
-            .route("product-get-all", r -> r.path("/api/product").uri(API_STOCK_URI))
+            .route("product-create", r -> r.path("/api/product").filters(f -> f.filter(jwtAuthenticationFilter)).uri(API_PRODUCTS_URI))
+            .route("product-get-all", r -> r.path("/api/product").uri(API_PRODUCTS_URI))
             .build();
     }
 }
